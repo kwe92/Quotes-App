@@ -28,7 +28,7 @@ class QuotesService extends ExtendedChangeNotifier {
 
   factory QuotesService() => _singleton;
 
-  Future<void> getQuotes() async {
+  Future<List<Quote>> getQuotes() async {
     final response = await _client.get(
       Uri.parse("https://zenquotes.io/api/quotes"),
     );
@@ -46,5 +46,7 @@ class QuotesService extends ExtendedChangeNotifier {
     ];
 
     notifyListeners();
+
+    return _quotes;
   }
 }
