@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_example_app/shared/extended_change_notifier.dart';
 import 'package:mvvm_example_app/shared/models/quote.dart';
+import 'package:mvvm_example_app/shared/repositories/quotes_repo.dart';
 import 'package:mvvm_example_app/shared/services/services.dart';
 
 class QuotesViewModel extends ExtendedChangeNotifier {
-  List<Quote> get quotes => quotesService.quotes;
+  List<Quote> _quotes = [];
+  List<Quote> get quotes => _quotes;
 
-  QuotesViewModel() {
+  final QuotesRepository _repo;
+
+  // List<Quote> get quotes => quotesService.quotes;
+
+  // TODO: try injecting the singleton and getting ride of the repo
+  QuotesViewModel(this._repo) {
     getQuotes();
   }
 
   Future<void> getQuotes() async {
     try {
       setBusy(true);
-      await quotesService.getQuotes();
+      _quotes = await _repo.getQuotes();
       setBusy(false);
 
       debugPrint("quotes: $quotes");
