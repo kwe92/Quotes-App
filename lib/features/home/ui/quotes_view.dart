@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mvvm_example_app/features/home/ui/quotes_view_model.dart';
+import 'package:mvvm_example_app/shared/repositories/quotes_repo.dart';
+import 'package:mvvm_example_app/shared/services/services.dart';
 import 'package:provider/provider.dart';
 
 // TODO: Outline what you did to stream line the process
@@ -11,7 +13,7 @@ class QuotesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => QuotesViewModel(),
+      create: (context) => QuotesViewModel(QuotesRepository(quotesService)),
       builder: (context, _) {
         final viewModel = context.watch<QuotesViewModel>();
 
