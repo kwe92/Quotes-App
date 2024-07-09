@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:mvvm_example_app/shared/extended_change_notifier.dart';
 import 'package:mvvm_example_app/shared/models/quote.dart';
 
 //! use get it service locator for client in real project, global variables are not the best choice but do work
@@ -17,7 +17,7 @@ class NetworkError extends Error {
   String toString() => message ?? "there was an issue retrieving your data.";
 }
 
-class QuotesService extends ExtendedChangeNotifier {
+class QuotesService with ChangeNotifier {
   List<Quote> _quotes = [];
 
   List<Quote> get quotes => _quotes;
@@ -28,7 +28,7 @@ class QuotesService extends ExtendedChangeNotifier {
 
   factory QuotesService() => _singleton;
 
-  Future<void> getQuotes() async {
+  Future<List<Quote>> getQuotes() async {
     final response = await _client.get(
       Uri.parse("https://zenquotes.io/api/quotes"),
     );
@@ -46,5 +46,7 @@ class QuotesService extends ExtendedChangeNotifier {
     ];
 
     notifyListeners();
+
+    return _quotes;
   }
 }
