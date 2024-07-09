@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:mvvm_example_app/features/home/ui/quotes_view_model.dart';
-
+import 'package:mvvm_example_app/shared/repositories/quotes_repo.dart';
 import '../../../setup/test_data.dart';
 import '../../../setup/test_helper_mocks.dart';
 
@@ -8,27 +9,24 @@ void main() {
   group(
     "QuotesViewModel -",
     () {
-      QuotesViewModel getModel() => QuotesViewModel();
-      test("when model is created, then a call to the zen quotes api is made.", () {
+      QuotesViewModel getModel(QuotesRepository repo) => QuotesViewModel(repo);
+      test("when model is created, then a call to the zen quotes api is made.", () async {
         // Arrange
+        final mockQuotesRepo = TestHelperMocks.getQuotesRepositoryMock();
 
-        final mockQuotesService = TestHelperMocks.getQuotesServiceMock();
-
-        var model = getModel();
+        final model = getModel(mockQuotesRepo);
 
         // Act
-
-        model.getQuotes();
+        await model.getQuotes();
 
         var actual = model.quotes;
 
         var expected = testQuotes;
 
-        print(actual);
-
         // Assert
+        expect(actual, expected);
 
-        // expect(actual, expected);
+        verify(() => mockQuotesRepo.getQuotes()).called(2);
       });
     },
   );
