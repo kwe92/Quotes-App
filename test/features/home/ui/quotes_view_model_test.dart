@@ -10,7 +10,7 @@ void main() {
     "QuotesViewModel -",
     () {
       QuotesViewModel getModel(QuotesRepository repo) => QuotesViewModel(repo);
-      test("when model is created, then a call to the zen quotes api is made.", () async {
+      test("when model is created and getQuotes function called, then qoutes propery is updated", () async {
         // Arrange
         final mockQuotesRepo = TestHelperMocks.getQuotesRepositoryMock();
 

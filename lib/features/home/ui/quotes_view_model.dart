@@ -10,8 +10,6 @@ class QuotesViewModel extends ExtendedChangeNotifier {
 
   final QuotesRepository _repo;
 
-  // List<Quote> get quotes => quotesService.quotes;
-
   // TODO: try injecting the singleton and getting ride of the repo
   QuotesViewModel(this._repo) {
     getQuotes();
