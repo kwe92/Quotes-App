@@ -5,18 +5,16 @@ import 'package:mvvm_example_app/features/home/ui/quotes_view_model.dart';
 import '../../../setup/test_helper_mocks.dart';
 
 void main() {
-  // QuotesViewModel getModel(QuotesRepository repo) => QuotesViewModel(repo, );
-
   testWidgets('quotes view ...', (tester) async {
     // Arrange - setup
 
-    var mockRepo = MockQuotesRepository();
+    var mockRepo = TestHelperMocks.getQuotesRepositoryMock();
 
-    var mockToastService = MockToastService();
+    var mockToastService = TestHelperMocks.getToastServiceMock();
 
     var viewModel = QuotesViewModel(mockRepo, mockToastService);
 
-    print(viewModel.quotes);
+    // print(viewModel.quotes);
 
     await pumpWidget(
       tester,
@@ -24,10 +22,14 @@ void main() {
       viewModel,
     );
 
-    await tester.pumpAndSettle(const Duration(seconds: 2));
+    await tester.pumpAndSettle(const Duration(seconds: 3));
 
     // Act
 
+    final finder = find.textContaining("Anne");
+
     // Assert - result
+
+    expect(finder, findsOneWidget);
   });
 }
