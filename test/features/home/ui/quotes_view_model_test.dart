@@ -15,7 +15,7 @@ void main() {
         // Arrange
         final mockQuotesRepo = TestHelperMocks.getQuotesRepositoryMock();
 
-        var mockToastService = MockToastService();
+        var mockToastService = TestHelperMocks.getToastServiceMock();
 
         final model = getModel(mockQuotesRepo, mockToastService);
 
@@ -29,7 +29,7 @@ void main() {
         // Assert
         expect(actual, expected);
 
-        verify(() => mockQuotesRepo.getQuotes()).called(2);
+        verify(() => mockQuotesRepo.getQuotes()).called(1);
       });
     },
   );

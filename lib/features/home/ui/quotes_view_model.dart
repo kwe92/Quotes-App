@@ -1,36 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:mvvm_example_app/shared/extended_change_notifier.dart';
 import 'package:mvvm_example_app/shared/models/quote.dart';
 import 'package:mvvm_example_app/shared/repositories/quotes_repo.dart';
 import 'package:mvvm_example_app/shared/services/toast_service.dart';
 
-class QuotesViewModel extends ExtendedChangeNotifier {
+class QuotesViewModel extends ChangeNotifier {
   List<Quote> _quotes = [];
+
+  bool _isInitialized = false;
+
   List<Quote> get quotes => _quotes;
 
+  bool get isInitialized => _isInitialized;
+
   final QuotesRepository _repo;
+
   final ToastService _toastService;
 
-  // TODO: try injecting the singleton and getting ride of the repo
+  QuotesViewModel(this._repo, this._toastService);
 
-  // TODO: refactor - read: https://stackoverflow.com/questions/54549235/dart-await-on-constructor
+  void initialize() {
+    if (!isInitialized) {
+      setInitialized(true);
 
-  QuotesViewModel(this._repo, this._toastService) {
-    getQuotes();
+      var future = getQuotes();
+
+      future.then((isSuccessful) => isSuccessful ? refresh() : null);
+    }
+
+    debugPrint("QuotesViewModel has been initialized.");
   }
 
-  Future<void> getQuotes() async {
+  Future<bool> getQuotes([bool shouldNotify = false]) async {
     try {
-      setBusy(true);
       _quotes = await _repo.getQuotes();
-      setBusy(false);
 
       debugPrint("quotes: $quotes");
-    } catch (err, _) {
-      setBusy(false);
+
+      if (shouldNotify) notifyListeners();
+
+      return true;
+      // ignore: unused_catch_stack
+    } catch (err, stackTrace) {
       debugPrint("Error - QuotesViewModel: getQuotes: ${err.toString()}");
 
+      // debugPrint("st: $st");
+
       _toastService.showSnackBar(err.toString());
+
+      return false;
     }
+  }
+
+  void setInitialized(bool isInitialized) {
+    _isInitialized = isInitialized;
+  }
+
+  void refresh() {
+    notifyListeners();
+    debugPrint("refresh called");
   }
 }
