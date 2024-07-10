@@ -21,6 +21,6 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
         create: (context) => QuotesViewModel(QuotesRepository(quotesService), toastService),
-        builder: (context, _) => const QuotesView(),
+        child: const QuotesView(),
       );
 }
