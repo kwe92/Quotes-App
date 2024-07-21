@@ -22,11 +22,6 @@ class TestHelperMocks {
     // instantiate mock
     final MockQuotesService service = MockQuotesService();
 
-    // mock functions
-    when(() => service.getQuotes()).thenAnswer((_) => Future.value(testQuotes));
-
-    when(() => service.quotes).thenReturn(testQuotes);
-
     // return mock
     return service;
   }
@@ -36,7 +31,10 @@ class TestHelperMocks {
     final MockQuotesRepository repo = MockQuotesRepository();
 
     // mock functions
-    when(() => repo.getQuotes()).thenAnswer((_) => Future.value(testQuotes));
+    when(() => repo.getQuotes()).thenAnswer((_) => Future.value());
+
+    // mock functions
+    when(() => repo.quotes).thenReturn(testQuotes);
 
     // return mock
     return repo;
@@ -62,15 +60,6 @@ Future<void> pumpWidget<T extends ChangeNotifier>(WidgetTester tester, Widget vi
     ),
   );
 }
-
-// Future<void> pumpWidget<T extends ChangeNotifier>(WidgetTester tester, Widget view, [T? viewModel]) async {
-//   await tester.pumpWidget(
-//     TestingWrapper(
-//       view: view,
-//       viewModel: viewModel,
-//     ),
-//   );
-// }
 
 class TestingWrapper<T extends ChangeNotifier> extends StatelessWidget {
   final Widget view;
