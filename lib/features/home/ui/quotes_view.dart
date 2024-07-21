@@ -12,7 +12,6 @@ class QuotesView extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<QuotesViewModel>();
 
-    if (!viewModel.isInitialized) viewModel.initialize();
     return Scaffold(
       backgroundColor: const Color(0xff222222),
       appBar: AppBar(
@@ -23,77 +22,93 @@ class QuotesView extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 48, right: 16),
-        child: RefreshIndicator(
-          backgroundColor: const Color(0xff2b2c2f),
-          color: Colors.blue,
-          onRefresh: () async {
-            await viewModel.getQuotes(true);
-          },
-          child: ListView.separated(
-            itemCount: viewModel.quotes.length,
-            itemBuilder: (context, i) {
-              return Container(
-                width: double.maxFinite,
-                height: 200,
-                padding: const EdgeInsets.only(left: 12, top: 16),
-                decoration: const BoxDecoration(
-                  color: Color(0xff2b2c2f),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(16),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 10,
-                      height: 10,
-                      child: SvgPicture.asset(
-                        "/Users/kwe/flutter-projects/MVVM-Example-App/mvvm_example_app/assets/left-quotation-mark.svg",
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Text(
-                        viewModel.quotes[i].quote,
-                        maxLines: 5,
-                        overflow: TextOverflow.fade,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 24, bottom: 24),
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: Text(
-                          viewModel.quotes[i].author,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+      body: FutureBuilder(
+        future: viewModel.getQuotes(),
+        builder: (context, snapshot) {
+          return viewModel.isCompleteSnapshot(snapshot)
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 48, right: 16),
+                  child: RefreshIndicator(
+                    backgroundColor: const Color(0xff2b2c2f),
+                    color: Colors.blue,
+                    onRefresh: () async {
+                      await viewModel.getQuotes(true);
+                    },
+                    child: !viewModel.snapshotHasError(snapshot)
+                        ? ListView.separated(
+                            itemCount: viewModel.quotes.length,
+                            itemBuilder: (context, i) {
+                              return Container(
+                                width: double.maxFinite,
+                                height: 200,
+                                padding: const EdgeInsets.only(left: 12, top: 16),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xff2b2c2f),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(16),
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                      child: SvgPicture.asset(
+                                        "/Users/kwe/flutter-projects/MVVM-Example-App/mvvm_example_app/assets/left-quotation-mark.svg",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                                      child: Text(
+                                        viewModel.quotes[i].quote,
+                                        maxLines: 5,
+                                        overflow: TextOverflow.fade,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 24, bottom: 24),
+                                      child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Text(
+                                          viewModel.quotes[i].author,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) => const SizedBox(height: 8),
+                          )
+                        : const Center(
+                            child: Text(
+                              " There was an issue retrieving your data please check your connection.",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-            separatorBuilder: (context, index) => const SizedBox(height: 8),
-          ),
-        ),
+                  ),
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                );
+        },
       ),
     );
   }
-}
-
-bool isCompleteSnapshot(AsyncSnapshot snapshot) {
-  return snapshot.connectionState == ConnectionState.done;
 }

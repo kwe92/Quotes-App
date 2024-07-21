@@ -9,12 +9,12 @@ import 'package:mvvm_example_app/shared/models/quote.dart';
 final _client = http.Client();
 
 class NetworkError extends Error {
-  final String? message;
+  final String message;
 
-  NetworkError([this.message]);
+  NetworkError([this.message = "there was an issue retrieving your data."]);
 
   @override
-  String toString() => message ?? "there was an issue retrieving your data.";
+  String toString() => message;
 }
 
 class QuotesService with ChangeNotifier {
