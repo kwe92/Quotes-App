@@ -25,7 +25,10 @@ class QuotesViewModel with ChangeNotifier {
     } catch (err, _) {
       debugPrint("Error - QuotesViewModel: getQuotes: ${err.toString()}");
 
-      _toastService.showSnackBar(err.toString());
+      _toastService.showSnackBar(
+        err.toString(),
+        Colors.red,
+      );
     }
   }
 
@@ -40,7 +43,10 @@ class QuotesViewModel with ChangeNotifier {
       // required to show a snackbar after widget build finishes
       WidgetsBinding.instance.addPostFrameCallback(
         (_) {
-          _toastService.showSnackBar(snapshot.error.toString());
+          _toastService.showSnackBar(
+            snapshot.error.toString(),
+            Colors.red,
+          );
         },
       );
     }
