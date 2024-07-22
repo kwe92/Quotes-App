@@ -8,10 +8,17 @@ class ToastService {
 
   factory ToastService() => _singleton;
 
-  void showSnackBar(String message) {
+  void showSnackBar(String message, [Color? textColor]) {
     WidgetKey.rootScaffoldMessengerKey.currentState!.showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }

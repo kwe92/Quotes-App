@@ -1,12 +1,5 @@
 import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:mvvm_example_app/shared/models/quote.dart';
-
-//! use get it service locator for client in real project, global variables are not the best choice but do work
-
-final _client = http.Client();
 
 class NetworkError extends Error {
   final String message;
@@ -17,18 +10,23 @@ class NetworkError extends Error {
   String toString() => message;
 }
 
-class QuotesService with ChangeNotifier {
-  List<Quote> _quotes = [];
+class QuotesService {
+  final http.Client _client;
 
-  List<Quote> get quotes => _quotes;
+  static QuotesService? _singleton;
 
-  static final _singleton = QuotesService._internal();
+  QuotesService._internal(this._client);
 
-  QuotesService._internal();
+  factory QuotesService(http.Client client) {
+    _singleton ??= QuotesService._internal(client);
 
-  factory QuotesService() => _singleton;
+    return _singleton!;
+  }
 
-  Future<List<Quote>> getQuotes() async {
+  Future<List<Map<String, dynamic>>> getQuotes() async {
+    // Simulate long delay
+    await Future.delayed(const Duration(seconds: 2));
+
     final response = await _client.get(
       Uri.parse("https://zenquotes.io/api/quotes"),
     );
@@ -41,12 +39,6 @@ class QuotesService with ChangeNotifier {
 
     final List<Map<String, dynamic>> data = List.from(responseBody);
 
-    _quotes = [
-      for (Map<String, dynamic> quote in data) Quote.fromMap(quote),
-    ];
-
-    notifyListeners();
-
-    return _quotes;
+    return data;
   }
 }
